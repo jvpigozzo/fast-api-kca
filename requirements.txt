@@ -1,0 +1,6 @@
+numpy
+pykalman
+scikit-learn
+fastapi
+uvicorn[standart]
+yfinance
