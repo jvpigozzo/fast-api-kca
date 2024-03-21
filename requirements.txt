@@ -1,3 +1,6 @@
+numpy
+pykalman
 scikit-learn
 fastapi
-uvicorn[starndart]
+uvicorn[standart]
+yfinance
