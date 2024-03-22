@@ -1,0 +1,14 @@
+.input-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .input-group {
+    margin-right: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .input-group label {
+    margin-right: 5px;
+  }
+  
