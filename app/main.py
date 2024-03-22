@@ -8,11 +8,25 @@ from typing import List, Optional
 from pykalman import KalmanFilter
 from fastapi import FastAPI, HTTPException
 from sklearn.preprocessing import StandardScaler
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 class FitKCAResponse(BaseModel):
+    date: List[str]
     measurements: List[float]
     position: List[float]
     velocity: List[float]
@@ -65,6 +79,9 @@ def get_and_process_data(ticker_symbol, start_date, end_date):
     z = data["Close"].values
     z = np.array(z)
 
+    # Make timestamp array
+    d = np.array([str(date.date()) for date in data.index.to_pydatetime()])
+
     # z length
     size = len(z)
 
@@ -77,19 +94,20 @@ def get_and_process_data(ticker_symbol, start_date, end_date):
     z_scaled = StandardScaler().fit_transform(z_scaled)
     z = z_scaled.flatten()
 
-    return t, z
+    return t, z, d
 
 
 @app.get("/fit_results")
 def get_fit_results(ticker: str, start_date: str, end_date: str, q: float):
     try:
-        t, z = get_and_process_data(ticker, start_date, end_date)
+        t, z, d = get_and_process_data(ticker, start_date, end_date)
         x_point, x_bands = fitKCA(t=t, z=z, q=q)[:2]
         return FitKCAResponse(
+            date=d,
             measurements=list(z),
             position=list(x_point[:, 0]),
             velocity=list(x_point[:, 1]),
-            acceleration=list(x_point[:, 1]),
+            acceleration=list(x_point[:, 2]),
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
