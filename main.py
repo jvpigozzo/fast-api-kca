@@ -12,14 +12,8 @@ from sklearn.preprocessing import StandardScaler
 app = FastAPI()
 
 
-class Data(BaseModel):
-    t: List[float]
-    z: List[float]
-    q: float
-    fwd: Optional[int] = 0
-
-
 class FitKCAResponse(BaseModel):
+    measurements: List[float]
     position: List[float]
     velocity: List[float]
     acceleration: List[float]
@@ -92,6 +86,7 @@ def get_fit_results(ticker: str, start_date: str, end_date: str, q: float):
         t, z = get_and_process_data(ticker, start_date, end_date)
         x_point, x_bands = fitKCA(t=t, z=z, q=q)[:2]
         return FitKCAResponse(
+            measurements=list(z),
             position=list(x_point[:, 0]),
             velocity=list(x_point[:, 1]),
             acceleration=list(x_point[:, 1]),
