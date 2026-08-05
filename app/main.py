@@ -4,7 +4,7 @@ Python code is from Kinetic Component Analysis, Marcos López de Prado & Riccard
 import numpy as np
 import yfinance as yf
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
 from pykalman import KalmanFilter
 from fastapi import FastAPI, HTTPException
 from sklearn.preprocessing import StandardScaler
@@ -72,6 +72,11 @@ def fitKCA(t, z, q, fwd=0):
 
 
 def get_and_process_data(ticker_symbol, start_date, end_date):
+    """
+    Downloads closing prices for ticker_symbol between start_date and end_date,
+    then returns scaled time indices, standardized measurements, and date labels
+    ready to be passed into fitKCA.
+    """
     # Download data from yahoo!
     data = yf.download(ticker_symbol, start=start_date, end=end_date, progress=False)
 
