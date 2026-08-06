@@ -41,8 +41,9 @@ def fitKCA(t, z, q, fwd=0):
     q: Scalar that multiplies the seed states covariance
     fwd: number of steps to forecast (optional, default=0)
     Output:
-    x[0]: smoothed state means of position velocity and acceleration
-    x[1]: smoothed state covar of position velocity and acceleration
+    x_mean: smoothed state means of position, velocity and acceleration
+    x_std: smoothed state standard deviations of position, velocity and acceleration
+    x_covar: smoothed state covariances of position, velocity and acceleration
     Dependencies: numpy, pykalman
     """
     # 1) Set up matrices A,H and a seed for Q
