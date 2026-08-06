@@ -21,7 +21,10 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      - frontend/.env
+      - path: frontend/.env
+        required: false
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
     command: npm run dev
 
 # The commented out section below is an example of how to define a PostgreSQL
