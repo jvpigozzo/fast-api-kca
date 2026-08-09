@@ -1,6 +1,8 @@
 """
 Python code is from Kinetic Component Analysis, Marcos López de Prado & Riccardo Rebonato - Journal of Investing (2016)
 """
+from datetime import date
+
 import numpy as np
 import yfinance as yf
 from pydantic import BaseModel
@@ -72,6 +74,7 @@ def fitKCA(t, z, q, fwd=0):
 
 
 def get_and_process_data(ticker_symbol, start_date, end_date):
+    # start_date/end_date are expected as YYYY-MM-DD strings
     # Download data from yahoo!
     data = yf.download(ticker_symbol, start=start_date, end=end_date, progress=False)
 
@@ -80,7 +83,7 @@ def get_and_process_data(ticker_symbol, start_date, end_date):
     z = np.array(z)
 
     # Make timestamp array
-    d = np.array([str(date.date()) for date in data.index.to_pydatetime()])
+    d = np.array([dt.date().isoformat() for dt in data.index.to_pydatetime()])
 
     # z length
     size = len(z)
@@ -98,9 +101,11 @@ def get_and_process_data(ticker_symbol, start_date, end_date):
 
 
 @app.get("/fit_results")
-def get_fit_results(ticker: str, start_date: str, end_date: str, q: float):
+def get_fit_results(ticker: str, start_date: date, end_date: date, q: float):
     try:
-        t, z, d = get_and_process_data(ticker, start_date, end_date)
+        t, z, d = get_and_process_data(
+            ticker, start_date.isoformat(), end_date.isoformat()
+        )
         x_point, x_bands = fitKCA(t=t, z=z, q=q)[:2]
         return FitKCAResponse(
             date=d,
