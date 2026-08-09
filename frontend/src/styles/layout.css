@@ -11,4 +11,7 @@
   .input-group label {
     margin-right: 5px;
   }
-  
+
+  .input-group input[type="range"] {
+    width: 150px;
+  }

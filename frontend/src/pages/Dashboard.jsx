@@ -16,7 +16,7 @@ const Dashboard = () => {
   const [tickerSymbol, setTickerSymbol] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [q, setQ] = useState('');
+  const [q, setQ] = useState(1);
 
   const fetchData = () => {    
     fetch(`${URL}/fit_results?ticker=${tickerSymbol}&start_date=${startDate}&end_date=${endDate}&q=${q}`)
@@ -69,12 +69,15 @@ const Dashboard = () => {
           />
         </div>
         <div className="input-group">
-          <label htmlFor="q">q:</label>
+          <label htmlFor="q">q: {q}</label>
           <input
-            type="text"
+            type="range"
             id="q"
+            min="0"
+            max="100"
+            step="1"
             value={q}
-            onChange={(e) => setQ(e.target.value)}
+            onChange={(e) => setQ(Number(e.target.value))}
           />
         </div>
       </div>
