@@ -1,17 +1,26 @@
 .input-container {
     display: flex;
     flex-wrap: wrap;
+    background-color: var(--color-surface);
+    color: var(--color-text);
   }
-  
+
   .input-group {
     margin-right: 20px;
     margin-bottom: 10px;
   }
-  
+
   .input-group label {
     margin-right: 5px;
+    color: var(--color-text);
   }
 
   .input-group input[type="range"] {
     width: 150px;
+  }
+
+  .input-group input {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
   }
