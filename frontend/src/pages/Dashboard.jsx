@@ -1,10 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import Plot from 'react-plotly.js';
 import "../styles/layout.css";
+import { useTheme } from '../context/ThemeContext';
+import themeCssText from '../styles/theme.css?raw';
 
 const URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
+// Parses the --color-background/--color-surface/--color-text values theme.css
+// defines per data-theme, so the Plotly layout uses the same palette without
+// duplicating the hex literals here.
+const readThemeVar = (block, varName) => {
+  const match = block.match(new RegExp(`${varName}:\\s*([^;]+);`));
+  return match ? match[1].trim() : '';
+};
+
+const parseChartColors = (themeName) => {
+  const blockMatch = themeCssText.match(
+    new RegExp(`:root\\[data-theme=["']${themeName}["']\\]\\s*{([^}]*)}`)
+  );
+  const block = blockMatch ? blockMatch[1] : '';
+  return {
+    paper_bgcolor: readThemeVar(block, '--color-background'),
+    plot_bgcolor: readThemeVar(block, '--color-surface'),
+    fontColor: readThemeVar(block, '--color-text'),
+  };
+};
+
+const PLOTLY_THEME_COLORS = {
+  light: parseChartColors('light'),
+  dark: parseChartColors('dark'),
+};
+
 const Dashboard = () => {
+  const { theme } = useTheme();
+  const chartColors = PLOTLY_THEME_COLORS[theme];
+
   const [plotData, setPlotData] = useState({
     date: [],
     z: [],
@@ -119,7 +149,14 @@ const Dashboard = () => {
             marker: { size: 1 }
           }
         ]}
-        layout={{ width: 800, height: 600, title: 'KCA Fit Results' }}
+        layout={{
+          width: 800,
+          height: 600,
+          title: 'KCA Fit Results',
+          paper_bgcolor: chartColors.paper_bgcolor,
+          plot_bgcolor: chartColors.plot_bgcolor,
+          font: { color: chartColors.fontColor },
+        }}
       />
     </div>
   );
